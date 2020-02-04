@@ -1,10 +1,24 @@
 <?php
-session_start();
-if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
-    header('Location:login.php');
-    exit;
+include_once './lib/fun.php';
 
+if($login =  checkLogin()){
+    $user = $_SESSION['user'];
 }
+//商品查询
+$page = isset($_GET['page'])? intval($_GET ['page']): 1;
+//把page与1对比，取最大的
+$page = max($page,1);
+//每页显示的条数
+$pageSize = 2;
+//page =1  limit 0,2     第几个值 ,有俩条
+//page =2  limit 2,2;
+//page = 3   limit 4,2
+
+
+
+$sql = "SELECT * FROM im_goods limit 1,10";
+
+
 ?>
 
 <!DOCTYPE html>
@@ -22,8 +36,13 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
     </div>
     <div class="auth fr">
         <ul>
+            <?php if($login): ?>
+            <li><span>管理员:<?php echo $user['username'] ?></span></li>
+            <li><a href="login_out.php">退出</a></li>
+            <?php else : ?>
             <li><a href="login.php">登录</a></li>
             <li><a href="register.php">注册</a></li>
+            <?php endif; ?>
         </ul>
     </div>
 </div>

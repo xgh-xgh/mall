@@ -63,7 +63,7 @@ function imgUpload($file)
     }
     //图像类型验证
     $type = $file['type'];
-    if (!in_array($type, array("image/png", "image/gif", "image/jpg"))) {
+    if (!in_array($type, array("image/png", "image/gif", "image/jpeg"))) {
         msg(2, '请上传png，gif，jpg的图像');
     }
     //上传目录

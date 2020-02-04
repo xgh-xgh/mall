@@ -7,6 +7,7 @@ if (!checkLogin()) {
 }
 //表单进行了提交处理
 if (!empty($_POST['name'])) {
+
     $con = mysqlInit('localhost', 'root', 'phpcj', 'imooc_mall');
 
     if (!$goodsId = intval($_POST['id'])) {
@@ -25,11 +26,14 @@ if (!empty($_POST['name'])) {
     //画品名称
     $name = mysqli_real_escape_string($con, trim($_POST['name']));
     //画品价格
+
     $price = intval($_POST['price']);
     //画品简介
     $des = mysqli_real_escape_string($con, trim($_POST['des']));
     //画品详情
     $content = mysqli_real_escape_string($con, trim($_POST['content']));
+    $pic = imgUpload($_FILES['file']);
+    $now = $_SERVER['REQUEST_TIME'];
 
     $nameLength = mb_strlen($name, 'utf-8');
     if ($nameLength <= 0 || $nameLength > 30) {
@@ -46,33 +50,19 @@ if (!empty($_POST['name'])) {
         msg(2, '画品详情不能为空');
     }
 
-    //跟新数组
-    $update = array(
-        'name' => $name,
-        'price' => $price,
-        'des' => $des,
-        'content' => $content
-    );
 
-    //当用户先择图片上传，才 进行图片上传
-    if ($_FILES['file']['size'] > 0) {
-        $pic = imgUpload($_FILES['file']);
-        $update['pic'] = $pic;
-    }
-    //跟新sql处理
-    $updateSql = '';
-    foreach ($update as $k => $v) {
-        $updateSql .= "{$k} = '{$v}',";
-    }
-    //去除多余逗号
-    $updateSql = rtrim($updateSql, ',');
 
-    //只跟新被更改的信息
-    foreach ($update as $k => $v) {
-        if ($goods[$k] == $v) {
-            unset($update[$k]);
-        }
+    $updateSql = "UPDATE im_goods SET name = '{$name}' , price = '{$price}' , des = '{$des}' , content = '{$content}'
+, pic = '{$pic}' ,update_time = '{$now}' WHERE id ='{$goodsId}'";
+    $obj = mysqli_query($con, $updateSql);
+    if ($obj) {
+        msg(1, '跟新成功');
+    } else {
+        msg(2, '跟新失败');
     }
+
+
+
 
 } else {
     msg(2, '路由非法', 'index.php');

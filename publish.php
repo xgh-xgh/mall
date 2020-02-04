@@ -85,7 +85,7 @@ if (!empty($_POST['name'])) {
                 </div>
                 <div class="additem">
                     <!-- 使用accept html5属性 声明仅接受png gif jpeg格式的文件                -->
-                    <label id="for-file">画品</label><input type="file" accept="image/png,image/gif,image/jpg" id="file"
+                    <label id="for-file">画品</label><input type="file" accept="image/png,image/gif,image/jpeg" id="file"
                                                           name="file">
                 </div>
                 <div class="additem textwrap">

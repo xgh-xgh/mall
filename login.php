@@ -1,14 +1,8 @@
 <?php
 include_once './lib/fun.php';   //在脚本执行期间包含并运行指定文件
 //开启session
-if(checkLogin()){
-    msg(1,'您已登录','index.php');
-}
-session_start();
-if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
-    header('Location:index.php');
-    exit;
-
+if (checkLogin()) {
+    msg(1, '您已登录', 'index.php');
 }
 
 //表单进行提交处理
@@ -67,6 +61,7 @@ if (!empty($_POST['username'])) { //empty() 函数用于检查一个变量是否
     </div>
     <div class="auth fr">
         <ul>
+
             <li><a href="login.php">登录</a></li>
             <li><a href="register.php">注册</a></li>
         </ul>
