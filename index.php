@@ -9,22 +9,51 @@ $page = isset($_GET['page'])? intval($_GET ['page']): 1;
 //把page与1对比，取最大的
 $page = max($page,1);
 //每页显示的条数
-$pageSize = 2;
-//page =1  limit 0,2     第几个值 ,有俩条
-//page =2  limit 2,2;
-//page = 3   limit 4,2
+$pageSize = 1;
+    //page =1  limit 0,2
+    //page =2  limit 2,2;
+    //page = 3   limit 4,2
+$offset = ($page-1)* $pageSize;
+$con = mysqlInit('localhost','root','phpcj','imooc_mall');
+
+$sql = "SELECT COUNT(id) as total from im_goods";
+$obj = mysqli_query($con,$sql);
+$result = mysqli_fetch_assoc($obj);
+
+$total = isset($result['total'])?$result['total']:0;
+unset($sql,$result,$obj);
+//排序id从小到大，浏览人数从大到小排序
+$sql = "SELECT * FROM im_goods ORDER BY `id` asc, `view` desc   limit {$offset},{$pageSize} ";
 
 
 
-$sql = "SELECT * FROM im_goods limit 1,10";
-
-$con = mysqlInit('localhost', 'root', 'phpcj', 'imooc_mall');
-$mysqlResultObj = mysqli_query($con, $sql);
-
+$mysqlResultObj = mysqli_query($con,$sql);
 $listData = [];
+
 while ($row = $mysqlResultObj->fetch_assoc()) {
+
     $listData[] = $row;
 }
+$pages = pages($total,$page,$pageSize,6);
+
+
+
+
+
+
+
+
+
+//$sql = "SELECT * FROM im_goods limit 1,10";
+//$con = mysqlInit('localhost', 'root', 'phpcj', 'imooc_mall');
+//$mysqlResultObj = mysqli_query($con, $sql);
+//
+//$listData = [];
+//
+//while ($row = $mysqlResultObj->fetch_assoc()) {
+//
+//    $listData[] = $row;
+//}
 
 ?>
 
@@ -45,6 +74,7 @@ while ($row = $mysqlResultObj->fetch_assoc()) {
         <ul>
             <?php if($login): ?>
             <li><span>管理员:<?php echo $user['username'] ?></span></li>
+                <li><a href="publish.php">发布</a></li>
             <li><a href="login_out.php">退出</a></li>
             <?php else : ?>
             <li><a href="login.php">登录</a></li>
@@ -61,36 +91,22 @@ while ($row = $mysqlResultObj->fetch_assoc()) {
         <ul>
             <?php foreach ($listData as $item) : ?>
                 <li>
-                    <img class="img-li-fix" src="<?php echo $item['pic'] ?>" alt="">
+                    <img class="img-li-fix" src="<?php echo $item['pic'] ?>" alt="<?php echo $item['name'] ?>">
                     <div class="info">
-                        <a href=""><h3 class="img_title"><?php echo $item['name'] ?></h3></a>
+                        <a href="detail.php?id=<?php echo $item['id'] ?>"><h3 class="img_title"><?php echo $item['name'] ?></h3></a>
                         <p>
                             <?php echo $item['des'] ?>
                         </p>
                         <div class="btn">
-                            <a href="#" class="edit">编辑</a>
-                            <a href="#" class="del">删除</a>
+                            <a href="edit.php?id=<?php echo $item['id'] ?>" class="edit">编辑</a>
+                            <a href="delete.php?id=<?php echo $item['id'] ?>" class="del">删除</a>
                         </div>
                     </div>
                 </li>
             <?php endforeach; ?>
         </ul>
     </div>
-    <div class="page-nav">
-        <ul>
-            <li><a href="#">首页</a></li>
-            <li><a href="#">上一页</a></li>
-            <li>...</li>
-            <li><a href="#">5</a></li>
-            <li><a href="#">6</a></li>
-            <li><span class="curr-page">7</span></li>
-            <li><a href="#">8</a></li>
-            <li><a href="#">9</a></li>
-            <li>...</li>
-            <li><a href="#">下一页</a></li>
-            <li><a href="#">尾页</a></li>
-        </ul>
-    </div>
+   <?php echo $pages ?>
 </div>
 
 <div class="footer">
